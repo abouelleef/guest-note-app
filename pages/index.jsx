@@ -36,7 +36,8 @@ export default function Home() {
     let sw = await navigator.serviceWorker.ready;
     let push = await sw.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: process.env.WEB_PUSH_PUBLIC_KEY,
+      applicationServerKey:
+        "BFeeDO0coCh44w6d_XWtm-JmqfdPWMf2M1hW1c9T0bXlG7OydMF1Zt_hyFLmwGX4uq_7ylAkx5262zVcDLLez2E",
     });
     console.log(JSON.stringify(push));
   };
