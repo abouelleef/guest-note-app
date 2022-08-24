@@ -1,8 +1,45 @@
 import Head from "next/head";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const subscribe = () => {};
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscription, setSubscription] = useState(null);
+  const [registration, setRegistration] = useState(null);
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.workbox !== undefined
+    ) {
+      // run only in browser
+      navigator.serviceWorker.ready.then((reg) => {
+        reg.pushManager.getSubscription().then((sub) => {
+          if (
+            sub &&
+            !(
+              sub.expirationTime &&
+              Date.now() > sub.expirationTime - 5 * 60 * 1000
+            )
+          ) {
+            setSubscription(sub);
+            setIsSubscribed(true);
+          }
+        });
+        setRegistration(reg);
+      });
+    }
+  }, []);
+
+  const subscribe = async () => {
+    let sw = await navigator.serviceWorker.ready;
+    let push = await sw.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: process.env.WEB_PUSH_PUBLIC_KEY,
+    });
+    console.log(JSON.stringify(push));
+  };
 
   return (
     <div>
